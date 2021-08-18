@@ -1,0 +1,31 @@
+@AbapCatalog.sqlViewName: 'ZDD_JOIN_AUSP'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'add atwrt_agg to full join'
+define view ZDD_FULL_JOIN_WITH_AUSP
+    with parameters
+        p_werk: werks_d,
+        p_date : iedd
+as select from ZDD_full_join( p_werk: $parameters.p_werk, p_date: $parameters.p_date )
+inner join ZDD_AUSP_ATWRT_AGG on ZDD_full_join.Plnbez = ZDD_AUSP_ATWRT_AGG.OBJEK {
+key ZDD_full_join.Aufnr,
+key ZDD_full_join.Objid,
+ZDD_AUSP_ATWRT_AGG.OBJEK as Material,
+ZDD_AUSP_ATWRT_AGG.ATWRT_agg as Characteristics,
+ZDD_full_join.arbpl as WorkCenter,
+//ZDD_full_join.Plnbez,
+ZDD_full_join.Autyp,
+ZDD_full_join.Objnr,
+ZDD_full_join.Isdd,
+ZDD_full_join.Isdz,
+ZDD_full_join.Ierd,
+ZDD_full_join.Ierz,
+ZDD_full_join.Isbd,
+ZDD_full_join.Isbz,
+ZDD_full_join.Iebd,
+ZDD_full_join.Iebz,
+ZDD_full_join.Isad,
+ZDD_full_join.Isaz,
+ZDD_full_join.Iedd
+}
