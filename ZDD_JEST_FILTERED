@@ -1,0 +1,12 @@
+@AbapCatalog.sqlViewName: 'ZDD_JEST'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'Pre filtered STAT = ''I0009'''
+define view ZDD_JEST_FILTERED as select from jest {
+    key objnr as Objnr,
+    key stat as Stat,
+    inact as Inact,
+    chgnr as Chgnr,
+    _dataaging as Dataaging
+} where stat = 'I0009'
