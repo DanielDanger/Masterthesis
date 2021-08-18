@@ -1,0 +1,17 @@
+@AbapCatalog.sqlViewName: 'ZDD_COUNT_AUSP'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'add atwrt_agg to count result'
+define view ZDD_COUNT_WITH_AUSP
+    with parameters
+        p_werk: werks_d,
+        p_date : iedd
+as select from ZDD_COUNT_MAT_ON_WC( p_werk: $parameters.p_werk, p_date: $parameters.p_date )
+inner join ZDD_AUSP_ATWRT_AGG on ZDD_COUNT_MAT_ON_WC.Plnbez = ZDD_AUSP_ATWRT_AGG.OBJEK {
+    ZDD_COUNT_MAT_ON_WC.arbpl as WorkCenter,
+    ZDD_AUSP_ATWRT_AGG.OBJEK as Material,
+    ZDD_AUSP_ATWRT_AGG.ATWRT_agg as Characteristics,
+//    ZDD_COUNT_MAT_ON_WC.Plnbez,
+    ZDD_COUNT_MAT_ON_WC.a_count as Count_WC
+}
