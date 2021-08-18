@@ -1,0 +1,19 @@
+@AbapCatalog.sqlViewName: 'ZDD_COUNT_MAT_WC'
+@AbapCatalog.compiler.compareFilter: true
+@AbapCatalog.preserveKey: true
+@AccessControl.authorizationCheck: #CHECK
+@EndUserText.label: 'count material on work center'
+define view ZDD_COUNT_MAT_ON_WC
+    with parameters 
+         p_werk: werks_d,
+         p_date : iedd
+as select from ZDD_full_join( p_werk: $parameters.p_werk, p_date: $parameters.p_date ) {
+//    key Aufnr,
+//    key Objid,
+    arbpl,
+    Plnbez,
+    count(*) as a_count
+//    Autyp,
+//    Objnr,
+//    Iedd
+} group by arbpl,  Plnbez
