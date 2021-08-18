@@ -1,0 +1,8 @@
+@EndUserText.label: 'aggregate atwrt from AUSP'
+define table function ZDD_AUSP_ATWRT_AGG
+returns {
+  client       : abap.clnt;
+  OBJEK        : cuobn;
+  ATWRT_agg    : abap.string; 
+}
+implemented by method zdd_helper_amdp=>get_ausp_atwrt_agg;
