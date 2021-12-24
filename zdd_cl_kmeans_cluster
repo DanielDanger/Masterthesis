@@ -1,0 +1,233 @@
+CLASS zdd_kmeans_cluster DEFINITION
+  PUBLIC
+  FINAL
+  CREATE PUBLIC .
+
+  PUBLIC SECTION.
+    INTERFACES if_amdp_marker_hdb.
+
+    TYPES: BEGIN OF ty_PAL_KMEANS_DATA_TAB,
+             id   TYPE i,
+             v000 TYPE p LENGTH 3 DECIMALS 2,
+             v001 TYPE c LENGTH 2,
+             v002 TYPE p LENGTH 3 DECIMALS 2,
+           END OF ty_PAL_KMEANS_DATA_TAB,
+           tt_PAL_KMEANS_DATA_TAB TYPE STANDARD TABLE OF ty_PAL_KMEANS_DATA_TAB,
+
+           BEGIN OF ty_PAL_PARAMETER_TBL,
+             param_name   TYPE c LENGTH 256,
+             int_value    TYPE i,
+             double_value TYPE DECFLOAT16,
+             string_value TYPE c LENGTH 1000,
+           END OF ty_PAL_PARAMETER_TBL,
+           tt_PAL_PARAMETER_TBL TYPE STANDARD TABLE OF ty_PAL_PARAMETER_TBL,
+
+
+           BEGIN OF typ_RESULT,
+
+             id                TYPE i,
+             cluster_id        TYPE i,
+             distance          TYPE p LENGTH 16 DECIMALS 14,
+             slight_silhouette TYPE p LENGTH 16 DECIMALS 14,
+           END OF typ_RESULT,
+           tt_typ_RESULT TYPE STANDARD TABLE OF typ_RESULT,
+
+
+           BEGIN OF typ_CENTERS,
+             cluster_id TYPE i,
+             v000       TYPE p LENGTH 16 DECIMALS 14,
+             v001       TYPE c LENGTH 2,
+             v002       TYPE p LENGTH 16 DECIMALS 14,
+           END OF typ_CENTERS,
+           tt_typ_CENTERS TYPE STANDARD TABLE OF typ_CENTERS,
+
+
+
+           BEGIN OF typ_MODEL,
+             row_index     TYPE i,
+             model_content TYPE string,
+           END OF typ_MODEL,
+           tt_typ_MODEL TYPE STANDARD TABLE OF typ_MODEL,
+
+           BEGIN OF typ_STATISTICS,
+             stat_name  TYPE string,
+             stat_value TYPE string,
+           END OF typ_STATISTICS,
+           tt_typ_STATISTICS TYPE STANDARD TABLE OF typ_STATISTICS,
+
+
+           BEGIN OF typ_PLACEHOLDER,
+             param_name   TYPE string,
+             int_value    TYPE i,
+             double_value TYPE p LENGTH 16 DECIMALS 14,
+             string_value TYPE string,
+           END OF typ_PLACEHOLDER,
+           tt_typ_PLACEHOLDER TYPE STANDARD TABLE OF typ_PLACEHOLDER
+           .
+
+
+
+
+
+    CLASS-METHODS kmeans_proc_call
+      IMPORTING
+        VALUE(it_KMEANS_DATA_TAB)   TYPE tt_PAL_KMEANS_DATA_TAB
+        VALUE(it_PAL_PARAMETER_TBL) TYPE tt_PAL_PARAMETER_TBL
+      EXPORTING
+        VALUE(et_RESULT)            TYPE tt_typ_RESULT
+        VALUE(et_CENTERS)           TYPE tt_typ_CENTERS
+        VALUE(et_MODEL)             TYPE tt_typ_MODEL
+        VALUE(et_STATISTICS)        TYPE tt_typ_STATISTICS
+        VALUE(et_PLACEHOLDER)       TYPE tt_typ_PLACEHOLDER.
+
+
+  PROTECTED SECTION.
+  PRIVATE SECTION.
+ENDCLASS.
+
+
+
+CLASS zdd_kmeans_cluster IMPLEMENTATION.
+
+  METHOD kmeans_proc_call BY DATABASE PROCEDURE FOR HDB LANGUAGE SQLSCRIPT.
+*  --  CALL _SYS_AFL.PAL_KMEANS(:it_KNN_DATA_TAB, :it_PAL_PARAMETER_TBL, ?, :et_KNN_DATA_TAB, :et_INFO, :et_cluster_qu, :et_info2);
+*  et_RESULT = select * from :et_RESULT;
+*  et_KNN_DATA_TAB = select * from :et_KNN_DATA_TAB;
+*  et_INFO = select * from :et_INFO;
+*  et_cluster_qu = select * from :et_cluster_qu;
+*  et_info2 = select * from :et_info2;
+
+
+
+*    DECLARE lt_PAL_KMEANS_DATA_TBL TABLE (
+*        ID INTEGER,
+*        V000 DOUBLE,
+*        V001 VARCHAR(2),
+*        V002 DOUBLE
+*    );
+*
+*
+*
+*    DECLARE lt_PAL_PARAMETER_TBL TABLE (
+*        PARAM_NAME NVARCHAR(256),
+*        INT_VALUE INTEGER,
+*        DOUBLE_VALUE DOUBLE,
+*        STRING_VALUE NVARCHAR(1000)
+*    );
+*
+*
+*
+*    DECLARE lt_RESULT TABLE (
+*        ID INTEGER,
+*        CLUSTER_ID INTEGER,
+*        DISTANCE DECIMAL,
+*        SLIGHT_SILHOUETTE DECIMAL
+*    );
+*
+*
+*
+*    DECLARE lt_CENTERS TABLE (
+*        CLUSTER_ID INTEGER,
+*        V000 DOUBLE,
+*        V001 VARCHAR(2),
+*        V002 DOUBLE
+*    );
+*
+*
+*
+*    DECLARE lt_MODEL TABLE (
+*        ROW_INDEX INTEGER,
+*        MODEL_CONTENT VARCHAR(100000000)
+*    );
+*
+*
+*
+*    DECLARE lt_STATISTICS TABLE (
+*        STAT_NAME VARCHAR(100000000),
+*        STAT_VALUE VARCHAR(100000000)
+*    );
+*
+*
+*
+*    DECLARE lt_PLACEHOLDER TABLE (
+*        PARAM_NAME NVARCHAR(256),
+*        INT_VALUE INTEGER,
+*        DOUBLE_VALUE DOUBLE,
+*        STRING_VALUE NVARCHAR(1000)
+*    );
+
+
+
+*
+*:lt_PAL_KMEANS_DATA_TBL.insert((0, 0.5, 'A', 0.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((1, 1.5, 'A', 0.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((2, 1.5, 'A', 1.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((3, 0.5, 'A', 1.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((4, 1.1, 'B', 1.2));
+*:lt_PAL_KMEANS_DATA_TBL.insert((5, 0.5, 'B', 15.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((6, 1.5, 'B', 15.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((7, 1.5, 'B', 16.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((8, 0.5, 'B', 16.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((9, 1.2, 'C', 16.1));
+*:lt_PAL_KMEANS_DATA_TBL.insert((10, 15.5, 'C', 15.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((11, 16.5, 'C', 15.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((12, 16.5, 'C', 16.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((13, 15.5, 'C', 16.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((14, 15.6, 'D', 16.2));
+*:lt_PAL_KMEANS_DATA_TBL.insert((15, 15.5, 'D', 0.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((16, 16.5, 'D', 0.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((17, 16.5, 'D', 1.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((18, 15.5, 'D', 1.5));
+*:lt_PAL_KMEANS_DATA_TBL.insert((19, 15.7, 'A', 1.6));
+
+
+
+
+
+
+
+*:lt_PAL_PARAMETER_TBL.insert(('THREAD_RATIO', NULL, 0.2, NULL));
+*:lt_PAL_PARAMETER_TBL.insert(('GROUP_NUMBER', 4, NULL, NULL));
+*:lt_PAL_PARAMETER_TBL.insert(('INIT_TYPE', 1, NULL, NULL));
+*:lt_PAL_PARAMETER_TBL.insert(('DISTANCE_LEVEL',2, NULL, NULL));
+*:lt_PAL_PARAMETER_TBL.insert(('MAX_ITERATION', 100, NULL, NULL));
+*:lt_PAL_PARAMETER_TBL.insert(('EXIT_THRESHOLD', NULL, 1.0E-6, NULL));
+*:lt_PAL_PARAMETER_TBL.insert(('CATEGORY_WEIGHTS', NULL, 0.5, NULL));
+
+
+
+
+
+    --CALL _SYS_AFL.PAL_KMEANS(:lt_PAL_KMEANS_DATA_TBL, :lt_PAL_PARAMETER_TBL, lt_RESULT, lt_CENTERS, lt_MODEL, lt_STATISTICS, lt_PLACEHOLDER);
+
+    CALL _SYS_AFL.PAL_KMEANS(:it_KMEANS_DATA_TAB, :it_PAL_PARAMETER_TBL, et_RESULT, et_CENTERS, et_MODEL, et_STATISTICS, et_PLACEHOLDER);
+
+
+
+*    et_RESULT = select * from :lt_RESULT;
+*    et_CENTERS = select * from :lt_CENTERS;
+*    et_MODEL = select * from :lt_MODEL;
+*    et_STATISTICS = select * from :lt_STATISTICS;
+*    et_PLACEHOLDER = select * from :lt_PLACEHOLDER;
+
+*  et_RESULT = select * from :et_RESULT;
+*  et_KNN_DATA_TAB = select * from :et_KNN_DATA_TAB;
+*  et_INFO = select * from :et_INFO;
+*  et_cluster_qu = select * from :et_cluster_qu;
+*  et_info2 = select * from :et_info2;
+
+
+  ENDMETHOD.
+ENDCLASS.
+© 2021 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
